@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://redqueensolutions.co.uk/sitemap.xml
