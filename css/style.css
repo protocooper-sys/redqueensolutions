@@ -395,3 +395,17 @@ footer{border-top:1px solid var(--line-2);padding:52px 0 40px;background:var(--g
 /* Full-width feature (image removed) — one column, readable line length */
 .feature.solo{grid-template-columns:1fr}
 .feature.solo>div{max-width:900px}
+
+/* Homepage contact CTA — replaces the old quick form, routes to the enquiry wizard */
+.contact-cta{
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:34px 32px;
+  background:color-mix(in srgb, var(--acc) 5%, transparent);
+  display:flex; flex-direction:column; align-items:flex-start; gap:16px;
+  align-self:start;
+}
+.contact-cta h3{ margin:0; font-size:clamp(1.3rem,2.2vw,1.7rem); line-height:1.15; }
+.contact-cta p{ margin:0; color:var(--ink-2); line-height:1.6; }
+.contact-cta .btn{ margin-top:4px; }
+.contact-cta .form-note{ color:var(--muted); font-size:.82rem; margin-top:2px; }
