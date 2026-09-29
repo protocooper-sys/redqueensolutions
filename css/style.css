@@ -409,3 +409,17 @@ footer{border-top:1px solid var(--line-2);padding:52px 0 40px;background:var(--g
 .contact-cta p{ margin:0; color:var(--ink-2); line-height:1.6; }
 .contact-cta .btn{ margin-top:4px; }
 .contact-cta .form-note{ color:var(--muted); font-size:.82rem; margin-top:2px; }
+
+/* Cookie consent banner */
+#cookie-consent{position:fixed;left:16px;right:16px;bottom:16px;z-index:3000;max-width:540px;margin-inline:auto;
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;
+  box-shadow:0 16px 48px -14px rgba(0,0,0,.6);display:flex;flex-direction:column;gap:14px;
+  animation:ccIn .3s ease both}
+@keyframes ccIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+#cookie-consent p{margin:0;color:var(--ink-2);font-size:14px;line-height:1.55}
+#cookie-consent .cc-btns{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+#cookie-consent .btn{padding:10px 20px}
+.foot-cookie{font-family:var(--mono);font-size:inherit;letter-spacing:.04em;color:var(--muted);
+  background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.foot-cookie:hover{color:var(--acc)}
+@media (prefers-reduced-motion:reduce){#cookie-consent{animation:none}}

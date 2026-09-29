@@ -1,18 +1,77 @@
-/* --- Analytics -------------------------------------------------------------
-   Set GA_ID to your GA4 Measurement ID (looks like G-XXXXXXXXXX) to switch on
-   Google Analytics site-wide. Left as the placeholder it stays fully dormant —
-   no script loads, no cookies set, no requests made. Privacy note: GA4 uses
-   cookies, so if you turn it on you may want a small consent notice. */
+/* --- Analytics + cookie consent -------------------------------------------
+   Google Analytics 4 only loads AFTER the visitor accepts (UK PECR / GDPR):
+   no analytics script and no cookies are set until then. A slim banner asks on
+   the first visit, the choice is remembered, and a "Cookie preferences" link in
+   the footer lets anyone change their mind or withdraw later. */
 (function(){
   var GA_ID='G-HR6WE0DLXG';
-  if(!GA_ID || GA_ID.indexOf('XXXX')>-1) return;      // not configured → do nothing
-  var s=document.createElement('script'); s.async=true;
-  s.src='https://www.googletagmanager.com/gtag/js?id='+encodeURIComponent(GA_ID);
-  document.head.appendChild(s);
-  window.dataLayer=window.dataLayer||[];
-  window.gtag=function(){dataLayer.push(arguments);};
-  gtag('js', new Date());
-  gtag('config', GA_ID);
+  var KEY='rq-consent';                                     /* 'granted' | 'denied' | unset */
+  var loaded=false;
+  function read(){ try{return localStorage.getItem(KEY);}catch(e){return null;} }
+  function save(v){ try{localStorage.setItem(KEY,v);}catch(e){} }
+  function loadGA(){
+    if(loaded || !GA_ID || GA_ID.indexOf('XXXX')>-1) return; /* not configured → nothing */
+    loaded=true;
+    var s=document.createElement('script'); s.async=true;
+    s.src='https://www.googletagmanager.com/gtag/js?id='+encodeURIComponent(GA_ID);
+    document.head.appendChild(s);
+    window.dataLayer=window.dataLayer||[];
+    window.gtag=function(){dataLayer.push(arguments);};
+    gtag('js', new Date());
+    gtag('config', GA_ID);
+  }
+  function dropGACookies(){                                  /* clear GA cookies if consent withdrawn */
+    try{
+      var kill='=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      document.cookie.split(';').forEach(function(c){
+        var n=c.split('=')[0].trim();
+        if(n.indexOf('_ga')===0 || n==='_gid'){
+          document.cookie=n+kill;
+          document.cookie=n+kill+'; domain='+location.hostname;
+          document.cookie=n+kill+'; domain=.'+location.hostname;
+        }
+      });
+    }catch(e){}
+  }
+  var banner=null;
+  function closeBanner(){ if(banner&&banner.parentNode){banner.parentNode.removeChild(banner);} banner=null; }
+  function accept(){ save('granted'); closeBanner(); loadGA(); }
+  function decline(){ save('denied'); closeBanner(); dropGACookies(); }
+  function openBanner(){
+    if(banner) return;
+    banner=document.createElement('div');
+    banner.id='cookie-consent'; banner.setAttribute('role','dialog');
+    banner.setAttribute('aria-label','Cookie consent'); banner.setAttribute('aria-live','polite');
+    banner.innerHTML=
+      '<p>We use <strong>Google Analytics</strong> cookies to understand how the site is used. '+
+      'Nothing loads until you choose — the site works fully either way.</p>'+
+      '<div class="cc-btns">'+
+        '<button type="button" class="btn btn-ghost" data-cc="decline">Decline</button>'+
+        '<button type="button" class="btn btn-primary" data-cc="accept">Accept</button>'+
+      '</div>';
+    (document.body||document.documentElement).appendChild(banner);
+    banner.addEventListener('click',function(e){
+      var b=e.target.closest('[data-cc]'); if(!b) return;
+      (b.getAttribute('data-cc')==='accept'?accept:decline)();
+    });
+  }
+  window.rqCookiePrefs=openBanner;                          /* used by the footer link */
+
+  function init(){
+    var c=read();
+    if(c==='granted') loadGA();
+    else if(c!=='denied') openBanner();
+    /* add a "Cookie preferences" control to the footer, on every page */
+    var meta=document.querySelector('.foot-meta');
+    if(meta && !meta.querySelector('.foot-cookie')){
+      var b=document.createElement('button');
+      b.type='button'; b.className='foot-cookie'; b.textContent='Cookie preferences';
+      b.addEventListener('click',openBanner);
+      var wrap=document.createElement('span'); wrap.appendChild(b); meta.appendChild(wrap);
+    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
+  else init();
 })();
 
 /* Red Queen Solutions — shared site behaviour */
