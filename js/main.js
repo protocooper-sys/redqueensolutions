@@ -4,7 +4,7 @@
    no script loads, no cookies set, no requests made. Privacy note: GA4 uses
    cookies, so if you turn it on you may want a small consent notice. */
 (function(){
-  var GA_ID='G-XXXXXXXXXX';
+  var GA_ID='G-HR6WE0DLXG';
   if(!GA_ID || GA_ID.indexOf('XXXX')>-1) return;      // not configured → do nothing
   var s=document.createElement('script'); s.async=true;
   s.src='https://www.googletagmanager.com/gtag/js?id='+encodeURIComponent(GA_ID);
